@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Huyền Bí 2026 - AI Consultant</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Updated Fonts: Inter (Sans) & Merriweather (Serif) -->
+    <!-- Updated Fonts: Roboto (Sans) & Merriweather (Serif) for excellent Vietnamese readability -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
               serif: ['"Merriweather"', 'serif'],
-              sans: ['"Inter"', 'sans-serif'],
+              sans: ['"Roboto"', 'sans-serif'],
             },
             colors: {
               brand: {
@@ -65,7 +65,11 @@
       body {
         background-color: #050A18;
         color: #E2E8F0;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Roboto', sans-serif;
+      }
+      
+      h1, h2, h3, h4, h5, h6, .font-serif {
+        font-family: 'Merriweather', serif;
       }
       
       /* Premium Glass Effect */

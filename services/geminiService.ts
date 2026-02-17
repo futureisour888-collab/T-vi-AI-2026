@@ -45,6 +45,19 @@ const baseProperties = {
       faceShape: { type: Type.STRING },
       element: { type: Type.STRING },
       harmonyScore: { type: Type.INTEGER },
+      
+      // NEW: Tam Dinh (3 Zones)
+      threeZones: {
+         type: Type.OBJECT,
+         properties: {
+            upper: { type: Type.STRING, description: "Phân tích Thượng đình (Trán) - Tiền vận" },
+            middle: { type: Type.STRING, description: "Phân tích Trung đình (Mũi, Gò má) - Trung vận" },
+            lower: { type: Type.STRING, description: "Phân tích Hạ đình (Cằm, Hàm) - Hậu vận" },
+            goldenAge: { type: Type.STRING, description: "Giai đoạn hoàng kim nhất (Ví dụ: Trung niên 35-50 tuổi)" }
+         },
+         required: ["upper", "middle", "lower", "goldenAge"]
+      },
+
       features: {
         type: Type.OBJECT,
         properties: {
@@ -55,16 +68,23 @@ const baseProperties = {
         },
         required: ["eyes", "nose", "mouth", "brows"]
       },
+      
+      // EXPANDED: 8 Major Palaces
       palaces: {
         type: Type.OBJECT,
         properties: {
-            wealth: { type: Type.STRING },
-            career: { type: Type.STRING },
-            marriage: { type: Type.STRING },
-            parents: { type: Type.STRING },
+            wealth: { type: Type.STRING, description: "Cung Tài Bạch" },
+            career: { type: Type.STRING, description: "Cung Quan Lộc" },
+            marriage: { type: Type.STRING, description: "Cung Phu Thê" },
+            parents: { type: Type.STRING, description: "Cung Phụ Mẫu" },
+            property: { type: Type.STRING, description: "Cung Điền Trạch (Nhà đất)" },
+            children: { type: Type.STRING, description: "Cung Tử Tức (Con cái)" },
+            migration: { type: Type.STRING, description: "Cung Thiên Di (Xuất ngoại/Đi xa)" },
+            health: { type: Type.STRING, description: "Cung Tật Ách (Sức khỏe tiềm ẩn)" },
         },
-        required: ["wealth", "career", "marriage", "parents"]
+        required: ["wealth", "career", "marriage", "parents", "property", "children", "migration", "health"]
       },
+      
       solutions: {
         type: Type.OBJECT,
         properties: {
@@ -187,11 +207,12 @@ export const getHoroscopePrediction = async (user: UserProfile): Promise<Predict
     Đóng vai: Đại sư Tử Vi Đẩu Số. Luận giải vận hạn 2026 cho:
     - ${user.name}, ${user.birthDate}, ${user.gender === 'male' ? 'Nam' : 'Nữ'}
 
-    YÊU CẦU:
-    1. Khách quan: Nói rõ Tốt/Xấu.
-    2. Format Markdown cho 'details' (BẮT BUỘC):
-       ✅ ĐIỂM SÁNG: ...
-       ⚠️ CẢNH BÁO: ...
+    YÊU CẦU QUAN TRỌNG:
+    1. Giọng văn: Trang trọng, khách quan, chuyên nghiệp. Tuyệt đối KHÔNG dùng văn nói, KHÔNG chat với người dùng (ví dụ: không dùng "nhé", "nha", "hì hì", "bye bye").
+    2. Nội dung: Tập trung vào phân tích vận hạn, không lan man.
+    3. Format Markdown cho 'details' (BẮT BUỘC):
+       ✅ ĐIỂM SÁNG: [Nội dung tốt...]
+       ⚠️ CẢNH BÁO: [Nội dung xấu/cần tránh...]
 
     Output JSON theo schema.
   `;
@@ -250,61 +271,66 @@ export const getImageAnalysis = async (
   `;
 
   if (type === 'PALM') {
-    systemInstruction = "Chuyên gia Sinh trắc vân tay & Tử vi.";
+    systemInstruction = "Bạn là Chuyên gia Sinh trắc vân tay & Tử vi. Phân tích khoa học, khách quan.";
     promptText = `Phân tích chỉ tay & vận 2026 cho: ${kycInfo}. ${formattingInstruction}`;
   } else if (type === 'FORTUNE_PAPER') {
     const wishesStr = payload.wishes && payload.wishes.length > 0 ? payload.wishes.join(", ") : "Vận hạn chung";
-    systemInstruction = "Chuyên gia giải quẻ xăm.";
+    systemInstruction = "Bạn là Chuyên gia giải quẻ xăm. Giải nghĩa trang trọng, cổ văn.";
     promptText = `Đọc ảnh xăm & giải nghĩa cho sở cầu: ${wishesStr}. ${kycInfo}. ${formattingInstruction}`;
   } else {
     // === FACE READING ===
-    systemInstruction = "Đại sư Nhân tướng học & Thẩm mỹ.";
+    // STRICT SYSTEM INSTRUCTION TO PREVENT CHATTINESS
+    systemInstruction = "Bạn là chuyên gia Nhân tướng học và Tử vi số 1. Phong cách: Chuyên nghiệp, Nghiêm túc, Sâu sắc. TUYỆT ĐỐI KHÔNG dùng văn nói, từ ngữ cợt nhả, từ ngữ giao tiếp dư thừa. Chỉ trả về dữ liệu phân tích.";
     
     promptText = `
       Thông tin hồ sơ: ${kycInfo}
 
       BƯỚC 1: KIỂM TRA GIỚI TÍNH (FACE ID CHECK)
-      - Hãy quan sát kỹ khuôn mặt trong ảnh.
-      - So sánh với giới tính trong hồ sơ: "${genderStr}".
-      - Nếu đặc điểm sinh học của khuôn mặt RÕ RÀNG KHÁC BIỆT với giới tính hồ sơ (Ví dụ: Hồ sơ Nam nhưng ảnh là Nữ, hoặc ngược lại):
-         -> Trả về JSON với "genderMismatch": true.
-         -> Các trường bắt buộc khác (title, overview...) điền giá trị giả định (ví dụ: "Sai thông tin") để đảm bảo đúng format JSON.
-         -> DỪNG PHÂN TÍCH.
-      - Nếu trùng khớp, hoặc ảnh khó xác định (trẻ em, ảnh mờ):
-         -> Set "genderMismatch": false.
-         -> TIẾP TỤC BƯỚC 2.
+      - Quan sát kỹ khuôn mặt. So sánh với giới tính hồ sơ: "${genderStr}".
+      - Nếu khác biệt sinh học rõ ràng (VD: Hồ sơ Nam - Ảnh Nữ): trả về "genderMismatch": true.
+      - Nếu trùng khớp: trả về "genderMismatch": false và TIẾP TỤC BƯỚC 2.
 
       BƯỚC 2: PHÂN TÍCH DIỆN TƯỚNG & GỢI Ý CẢI VẬN CHUYÊN SÂU
       
-      QUAN TRỌNG:
-      - Phân tích sâu sắc, cụ thể từng bộ phận.
-      - Nếu ảnh mờ, phân tích dựa trên Tướng Mệnh Tổng Quát của độ tuổi và giới tính.
+      YÊU CẦU QUAN TRỌNG:
+      - Phân tích sâu sắc, khoa học dựa trên ngũ quan, tam đình, ngũ nhạc.
+      - KHÔNG được viết kiểu trò chuyện, KHÔNG chào hỏi.
+      - Nội dung phải là văn bản báo cáo chuyên ngành.
 
-      OUTPUT FORMAT:
-      PHẦN 1: FACE ANALYSIS (Bắt buộc điền object 'faceAnalysis')
+      OUTPUT FORMAT (JSON):
+      PHẦN 1: FACE ANALYSIS
       - faceShape, element, harmonyScore (0-100).
-      - features: Phân tích chi tiết hình dáng và ý nghĩa tướng số của Mắt, Mũi, Miệng, Lông mày (mỗi mục viết khoảng 3-4 câu, phân tích sâu).
-      - palaces: Luận giải sâu về Cung Tài Bạch, Quan Lộc, Phu Thê, Phụ Mẫu dựa trên các bộ vị (mỗi mục 3-4 câu).
       
-      PHẦN 2: GIẢI PHÁP CẢI VẬN (Solutions) - Cần cực kỳ chi tiết và thực tế:
-      - hairStyle: Gợi ý kiểu tóc cụ thể phù hợp khuôn mặt và ngũ hành, giải thích tại sao.
-      - accessories: Gợi ý chi tiết kính, khuyên tai hoặc phụ kiện đi kèm để cân bằng gương mặt.
-      - makeup: Hướng dẫn trang điểm hoặc thẩm mỹ (nếu cần) để che khuyết điểm, tăng vượng khí.
-      - fengShuiItem: Đề xuất một vật phẩm phong thủy cải vận tốt nhất. Hãy cung cấp 4 thông tin:
-           + itemName: Tên chính xác vật phẩm (ví dụ: Tỳ Hưu Thạch Anh, Vòng Tay Gỗ Sưa...).
-           + material: Chất liệu chính (Đá, Gỗ, Kim loại...) phù hợp ngũ hành người đó.
-           + color: Màu sắc phù hợp mệnh.
-           + meaning: Ý nghĩa phong thủy (chiêu tài, cầu duyên, hay hộ mệnh...) giải thích ngắn gọn tại sao chọn vật phẩm này.
+      - THÊM MỚI: threeZones (Tam Đình):
+        + upper: Luận giải Thượng Đình (Trán - Tiền vận - Trí tuệ).
+        + middle: Luận giải Trung Đình (Mũi, Má - Trung vận - Ý chí).
+        + lower: Luận giải Hạ Đình (Cằm - Hậu vận - Tình cảm).
+        + goldenAge: Kết luận giai đoạn sung túc nhất (VD: Trung vận 30-50t).
+
+      - features: Phân tích Mắt, Mũi, Miệng, Lông mày.
+      
+      - palaces (12 CUNG MỞ RỘNG): Luận giải 8 cung quan trọng nhất:
+        1. Wealth (Tài Bạch)
+        2. Career (Quan Lộc)
+        3. Marriage (Phu Thê)
+        4. Parents (Phụ Mẫu)
+        5. Property (Điền Trạch - Đất đai) -> RẤT QUAN TRỌNG
+        6. Children (Tử Tức - Con cái)
+        7. Migration (Thiên Di - Xuất ngoại)
+        8. Health (Tật Ách - Sức khỏe tiềm ẩn)
+      
+      PHẦN 2: GIẢI PHÁP CẢI VẬN
+      - hairStyle, accessories, makeup, fengShuiItem.
 
       PHẦN 3: VẬN HẠN 2026 CHI TIẾT
-      Trong 'details' (Sự nghiệp, Tài lộc, Tình duyên, Sức khỏe), hãy viết nội dung dài, chi tiết, cụ thể hóa các tháng tốt/xấu nếu có thể.
+      Trong 'details' (Sự nghiệp, Tài lộc, Tình duyên, Sức khỏe):
+      - Viết nội dung phân tích cụ thể, độ dài vừa đủ.
       
       QUY TẮC FORMAT DETAILS:
       - Bắt buộc chia thành 2 phần: Điểm Sáng và Cảnh Báo.
       - Sử dụng format chính xác:
-      ✅ ĐIỂM SÁNG: [Nội dung chi tiết...]
-      ⚠️ CẢNH BÁO: [Nội dung chi tiết...]
-      - TUYỆT ĐỐI KHÔNG sử dụng dấu ** (bôi đậm) trong nội dung văn bản.
+      ✅ ĐIỂM SÁNG: [Nội dung...]
+      ⚠️ CẢNH BÁO: [Nội dung...]
     `;
   }
 
@@ -374,7 +400,7 @@ export const sendFollowUpQuestion = async (
   const prompt = `
     Dữ liệu cũ: ${historyContext.overview}.
     Câu hỏi: "${userQuestion}".
-    Trả lời ngắn gọn (dưới 150 chữ) phong thái thầy bói.
+    Trả lời ngắn gọn (dưới 150 chữ) phong thái thầy bói, nghiêm túc, không cợt nhả.
   `;
 
   try {
@@ -393,7 +419,7 @@ export const sendFollowUpQuestion = async (
  */
 export const getDailyTarotReading = async (): Promise<DailyTarotResult> => {
   const randomCard = TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)];
-  const prompt = `Tarot card: "${randomCard}". Meaning & Message today. Vietnamese. JSON output.`;
+  const prompt = `Tarot card: "${randomCard}". Meaning & Message today. Vietnamese. JSON output. Concise.`;
 
   const schema = {
     type: Type.OBJECT,

@@ -43,6 +43,15 @@ export interface FaceAnalysisData {
   faceShape: string; // Ví dụ: Mặt chữ Điền, Mặt Trái Xoan
   element: string; // Ngũ hành khuôn mặt (Kim/Mộc...)
   harmonyScore: number; // Điểm phúc tướng (0-100)
+  
+  // NEW: Tam Đình (3 Zones) - Analyze life stages
+  threeZones: {
+      upper: string;  // Thượng đình (Tiền vận < 30 tuổi)
+      middle: string; // Trung đình (Trung vận 31-50 tuổi)
+      lower: string;  // Hạ đình (Hậu vận > 50 tuổi)
+      goldenAge: string; // Giai đoạn vượng phát nhất
+  };
+
   // Phân tích ngũ quan
   features: {
     eyes: string; // Thần thái đôi mắt
@@ -50,13 +59,19 @@ export interface FaceAnalysisData {
     mouth: string; // Tướng miệng (Xuất nạp)
     brows: string; // Lông mày (Bảo thọ)
   };
-  // 12 Cung Tướng Mệnh (Premium Content)
+  
+  // 12 Cung Tướng Mệnh (Premium Content - Expanded)
   palaces: {
-    wealth: string; // Cung Tài Bạch
-    career: string; // Cung Quan Lộc
-    marriage: string; // Cung Phu Thê
-    parents: string; // Cung Phụ Mẫu
+    wealth: string; // Cung Tài Bạch (Tiền)
+    career: string; // Cung Quan Lộc (Sự nghiệp)
+    marriage: string; // Cung Phu Thê (Vợ chồng)
+    parents: string; // Cung Phụ Mẫu (Cha mẹ)
+    property: string; // NEW: Cung Điền Trạch (Đất đai)
+    children: string; // NEW: Cung Tử Tức (Con cái)
+    migration: string; // NEW: Cung Thiên Di (Đi xa/Xuất ngoại)
+    health: string; // NEW: Cung Tật Ách (Sức khỏe/Bệnh tật)
   };
+
   // Giải pháp cải vận (Monetization Hook)
   solutions: {
     hairStyle: string; // Gợi ý kiểu tóc

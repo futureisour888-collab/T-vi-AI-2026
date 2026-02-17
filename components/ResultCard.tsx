@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { PredictionResult } from '../types';
 import ReactMarkdown from 'react-markdown';
-import { Compass, Heart, Briefcase, Coins, Activity, Sparkles, ScanLine, FileText, Download, ChevronRight, ScrollText, Lightbulb, UserCircle, Calendar, Target, Image as ImageIcon, BookOpen, AlertOctagon, Ban, CheckCircle2, AlertTriangle, Eye, Smile, Gem, Scissors, Glasses, Crown, Printer, ScanFace, Star, Hexagon, Component, Palette } from 'lucide-react';
+import { Compass, Heart, Briefcase, Coins, Activity, Sparkles, ScanLine, FileText, Download, ChevronRight, ScrollText, Lightbulb, UserCircle, Calendar, Target, Image as ImageIcon, BookOpen, AlertOctagon, Ban, CheckCircle2, AlertTriangle, Eye, Smile, Gem, Scissors, Glasses, Crown, Printer, ScanFace, Star, Hexagon, Component, Palette, Home, Baby, Plane, ShieldCheck, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
@@ -18,32 +18,35 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset, imageSrc }) =>
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [isExporting, setIsExporting] = useState(false);
 
-  // Helper function to map text color to Hex
+  // Improved Color Mapping for Vietnamese terms
   const getColorHex = (colorName: string): string => {
     const lower = colorName.toLowerCase().trim();
-    if (lower.includes('đỏ')) return '#DC2626';
+    if (lower.includes('đỏ') || lower.includes('huyết')) return '#DC2626';
     if (lower.includes('xanh lá') || lower.includes('lục')) return '#16A34A';
-    if (lower.includes('xanh dương') || lower.includes('lam') || lower.includes('nước')) return '#2563EB';
-    if (lower.includes('vàng')) return '#CA8A04';
-    if (lower.includes('trắng') || lower.includes('kim') || lower.includes('bạc')) return '#F1F5F9';
-    if (lower.includes('đen') || lower.includes('huyền')) return '#0F172A';
+    if (lower.includes('xanh dương') || lower.includes('lam') || lower.includes('nước') || lower.includes('thủy')) return '#2563EB';
+    if (lower.includes('vàng') || lower.includes('kim')) return '#CA8A04'; // Gold/Yellow
+    if (lower.includes('trắng') || lower.includes('bạc')) return '#F8FAFC'; // White/Silver
+    if (lower.includes('đen') || lower.includes('huyền')) return '#1e293b'; // Dark Slate
     if (lower.includes('tím')) return '#9333EA';
     if (lower.includes('hồng')) return '#DB2777';
     if (lower.includes('cam')) return '#EA580C';
     if (lower.includes('xám') || lower.includes('ghi')) return '#64748B';
-    if (lower.includes('nâu')) return '#78350F';
-    return '#D4AF37'; // Default Gold
+    if (lower.includes('nâu') || lower.includes('đất') || lower.includes('thổ')) return '#78350F';
+    if (lower.includes('be') || lower.includes('kem')) return '#F5F5DC';
+    if (lower.includes('ngọc')) return '#10B981'; // Emerald
+    return '#D4AF37'; // Default Gold for unknown
   };
 
   const getColors = (colorString: string | undefined): string[] => {
     if (!colorString) return [];
-    return colorString.split(/,|và|\//).map(s => s.trim()).filter(s => s.length > 0);
+    // Split by common delimiters: comma, 'và', slash, semicolon
+    return colorString.split(/,|và|với|\/|;/).map(s => s.trim()).filter(s => s.length > 0);
   };
 
   const captureAndDownloadPdf = async () => {
     const page1Id = 'print-page-1';
     const page2Id = 'print-page-2';
-    const page3Id = 'print-page-3'; // New Page 3
+    const page3Id = 'print-page-3'; 
     
     const element1 = document.getElementById(page1Id);
     const element2 = document.getElementById(page2Id);
@@ -274,9 +277,12 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset, imageSrc }) =>
                                 </div>
                              </div>
                              
-                             <div className="mt-4 text-center">
-                                <p className="text-xs text-slate-500 italic">"Tướng tùy tâm sinh, tướng tùy tâm diệt. Kết quả phân tích dựa trên các chỉ số sinh trắc học hiện tại."</p>
-                             </div>
+                             {faceData.threeZones && (
+                                 <div className="mt-4 bg-slate-50 border border-slate-200 p-3 rounded">
+                                     <div className="text-xs font-bold text-[#9D8031] uppercase mb-1">Vận Khí Hoàng Kim</div>
+                                     <div className="text-sm font-serif italic text-slate-800">{faceData.threeZones.goldenAge}</div>
+                                 </div>
+                             )}
                          </div>
                      </div>
                      
@@ -361,15 +367,46 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset, imageSrc }) =>
                  )}
             </div>
             
-            {/* Advice / Lucky Numbers at bottom */}
-            <div className="mt-auto mb-8 grid grid-cols-2 gap-6">
-                <div className="bg-[#FFFCF0] border border-[#E8DCC2] p-4 rounded text-center">
-                    <span className="text-[10px] text-slate-500 uppercase tracking-widest block mb-1">Số May Mắn</span>
-                    <span className="text-2xl font-bold text-slate-900 font-serif">{result.luckyNumber}</span>
+            {/* Advice / Lucky Numbers at bottom - UPDATED with Swatches */}
+            <div className="mt-auto mb-8 grid grid-cols-3 gap-4">
+                {/* Lucky Number */}
+                <div className="bg-[#FFFCF0] border border-[#E8DCC2] p-3 rounded text-center flex flex-col justify-center">
+                    <span className="text-[9px] text-slate-500 uppercase tracking-widest block mb-1">Số May Mắn</span>
+                    <span className="text-3xl font-bold text-slate-900 font-serif">{result.luckyNumber}</span>
                 </div>
-                <div className="bg-[#FFFCF0] border border-[#E8DCC2] p-4 rounded text-center">
-                    <span className="text-[10px] text-slate-500 uppercase tracking-widest block mb-1">Màu Hợp Mệnh</span>
-                    <span className="text-xl font-bold text-slate-900 font-serif">{result.luckyColor}</span>
+
+                {/* Lucky Color */}
+                <div className="bg-[#FFFCF0] border border-[#E8DCC2] p-3 rounded text-center flex flex-col items-center justify-center">
+                    <span className="text-[9px] text-slate-500 uppercase tracking-widest block mb-2">Màu Hợp Mệnh</span>
+                    <div className="flex -space-x-1.5 mb-2 justify-center">
+                        {luckyColorsList.map((c, i) => (
+                           <div 
+                              key={i}
+                              className="w-6 h-6 rounded-full border border-slate-300 shadow-sm"
+                              style={{ backgroundColor: getColorHex(c) }}
+                           ></div>
+                        ))}
+                    </div>
+                    <span className="text-sm font-bold text-slate-900 font-serif leading-tight px-1">{result.luckyColor}</span>
+                </div>
+
+                {/* Unlucky Color */}
+                <div className="bg-slate-50 border border-slate-200 p-3 rounded text-center flex flex-col items-center justify-center">
+                    <span className="text-[9px] text-slate-500 uppercase tracking-widest block mb-2">Màu Kỵ (Tránh)</span>
+                    <div className="flex -space-x-1.5 mb-2 justify-center">
+                        {unluckyColorsList.map((c, i) => (
+                           <div 
+                              key={i}
+                              className="w-6 h-6 rounded-full border border-slate-300 relative overflow-hidden"
+                              style={{ backgroundColor: getColorHex(c) }}
+                           >
+                              {/* Muted overlay for PDF print */}
+                              <div className="absolute inset-0 bg-white/50"></div>
+                              <div className="absolute inset-0 flex items-center justify-center text-slate-500 font-sans text-[10px] font-bold">×</div>
+                           </div>
+                        ))}
+                    </div>
+                    <span className="text-sm font-bold text-slate-500 font-serif leading-tight px-1">{result.unluckyColor || 'Không có'}</span>
                 </div>
             </div>
 
@@ -440,7 +477,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset, imageSrc }) =>
                                      <Glasses size={14} className="text-blue-600"/>
                                  </div>
                                  <div>
-                                     <h4 className="text-sm font-bold text-blue-900 mb-1">Phụ Kiện & Trang Phục</h4>
+                                     <h4 className="text-sm font-bold text-blue-200 mb-1">Phụ Kiện & Trang Phục</h4>
                                      <p className="text-sm text-slate-700 leading-relaxed text-justify">{faceData.solutions.accessories}</p>
                                  </div>
                              </div>
@@ -550,7 +587,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset, imageSrc }) =>
                   </div>
               )}
 
-              {/* Stats Grid - UPDATED with Unlucky Color */}
+              {/* Stats Grid - UPDATED with Visual Swatches for Lucky/Unlucky */}
               <div className="flex-1 p-4 grid grid-cols-2 gap-3 content-start bg-brand-dark/20">
                   <div className="col-span-2 bg-brand-secondary/40 p-3 rounded-lg border border-white/5 text-center flex flex-row items-center justify-between px-4">
                       <span className="text-xs text-brand-muted uppercase">Điểm Vận</span>
@@ -570,10 +607,10 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset, imageSrc }) =>
                            ></div>
                          ))}
                       </div>
-                      <span className="text-[10px] font-bold text-brand-text truncate mt-1 max-w-full px-1">{result.luckyColor}</span>
+                      <span className="text-sm font-bold text-brand-text truncate mt-1 max-w-full px-1">{result.luckyColor}</span>
                   </div>
 
-                  {/* Unlucky Color (Added) */}
+                  {/* Unlucky Color (Added Visual Swatches with Muted/Greyed Effect) */}
                   {result.unluckyColor ? (
                       <div className="bg-brand-secondary/40 p-3 rounded-lg border border-white/5 text-center flex flex-col items-center">
                           <span className="block text-[10px] text-brand-muted uppercase mb-2 flex items-center gap-1"><Ban size={10} /> Màu Kỵ</span>
@@ -581,13 +618,17 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset, imageSrc }) =>
                              {unluckyColorsList.map((c, i) => (
                                <div 
                                   key={i}
-                                  className="w-6 h-6 rounded-full border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.1)] z-10"
+                                  className="w-6 h-6 rounded-full border border-white/20 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-10 relative overflow-hidden"
                                   style={{ backgroundColor: getColorHex(c) }}
-                                  title={c}
-                               ></div>
+                                  title={`Tránh màu: ${c}`}
+                               >
+                                  {/* Muted Overlay for "Unlucky" effect */}
+                                  <div className="absolute inset-0 bg-black/40 backdrop-grayscale-[50%]"></div>
+                                  <div className="absolute inset-0 flex items-center justify-center text-white/70 font-bold text-[8px]">×</div>
+                               </div>
                              ))}
                           </div>
-                          <span className="text-[10px] font-bold text-brand-text truncate mt-1 max-w-full px-1">{result.unluckyColor}</span>
+                          <span className="text-sm font-bold text-brand-text truncate mt-1 max-w-full px-1">{result.unluckyColor}</span>
                       </div>
                   ) : (
                       <div className="bg-brand-secondary/40 p-3 rounded-lg border border-white/5 text-center flex flex-col items-center justify-center opacity-50">
@@ -645,6 +686,43 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset, imageSrc }) =>
                    {faceData ? (
                        // --- COMMERCIAL FACE READING OVERVIEW ---
                        <div className="space-y-6">
+                           
+                           {/* NEW: Tam Dinh (3 Zones) Visualization */}
+                           {faceData.threeZones && (
+                               <div className="bg-gradient-to-r from-brand-secondary/80 to-brand-primary/80 border border-brand-accent/30 rounded-xl p-5 shadow-lg relative overflow-hidden">
+                                   <div className="absolute top-0 right-0 p-2 opacity-5 pointer-events-none">
+                                       <ScanFace size={100} />
+                                   </div>
+                                   <div className="flex items-center gap-2 mb-4 border-b border-white/5 pb-2">
+                                       <Target className="text-brand-accent" size={20}/>
+                                       <h3 className="text-white font-bold uppercase text-sm tracking-wider">Phân Tích Tam Đình (Vận Mệnh Theo Độ Tuổi)</h3>
+                                   </div>
+                                   
+                                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                       {/* Upper Zone */}
+                                       <div className="bg-black/20 p-3 rounded-lg border border-white/5">
+                                           <div className="text-[10px] text-brand-muted uppercase tracking-wider mb-1">Tiền Vận (Trán)</div>
+                                           <div className="text-xs text-white text-justify leading-relaxed">{faceData.threeZones.upper}</div>
+                                       </div>
+                                       {/* Middle Zone */}
+                                       <div className="bg-black/20 p-3 rounded-lg border border-white/5">
+                                           <div className="text-[10px] text-brand-muted uppercase tracking-wider mb-1">Trung Vận (Mũi/Má)</div>
+                                           <div className="text-xs text-white text-justify leading-relaxed">{faceData.threeZones.middle}</div>
+                                       </div>
+                                       {/* Lower Zone */}
+                                       <div className="bg-black/20 p-3 rounded-lg border border-white/5">
+                                           <div className="text-[10px] text-brand-muted uppercase tracking-wider mb-1">Hậu Vận (Cằm)</div>
+                                           <div className="text-xs text-white text-justify leading-relaxed">{faceData.threeZones.lower}</div>
+                                       </div>
+                                   </div>
+
+                                   <div className="bg-brand-accent/10 border border-brand-accent/20 rounded-lg p-3 flex items-center justify-between">
+                                       <span className="text-xs text-brand-accent font-bold uppercase">Thời Kỳ Hoàng Kim:</span>
+                                       <span className="text-sm font-serif font-bold text-white">{faceData.threeZones.goldenAge}</span>
+                                   </div>
+                               </div>
+                           )}
+
                            {/* 4 Pillars of Face */}
                            <div className="grid grid-cols-2 gap-4">
                                <div className="bg-brand-secondary/30 p-3 rounded-lg border border-white/5">
@@ -677,26 +755,62 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset, imageSrc }) =>
                                </div>
                            </div>
 
-                           {/* Premium 12 Palaces Teaser */}
-                           <div className="bg-gradient-to-r from-brand-secondary/50 to-brand-dark/50 p-5 rounded-xl border border-brand-accent/20 relative overflow-hidden group">
+                           {/* Premium 12 Palaces Teaser - UPDATED to Grid Layout for 8 Palaces */}
+                           <div className="bg-gradient-to-b from-brand-secondary/50 to-brand-dark/50 p-5 rounded-xl border border-brand-accent/20 relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 p-2 opacity-10">
                                     <Sparkles size={80} className="text-brand-accent" />
                                 </div>
                                 <h3 className="text-brand-accent font-bold uppercase tracking-widest text-sm mb-4 flex items-center gap-2">
-                                    <Crown size={16} /> 12 Cung Tướng Mệnh
+                                    <Crown size={16} /> Luận Giải 12 Cung Tướng Mệnh (Chi Tiết)
                                 </h3>
-                                <div className="space-y-3">
-                                    <div className="flex flex-col md:flex-row gap-1 md:gap-4 border-b border-white/5 pb-2">
-                                        <span className="text-yellow-200 font-bold text-xs min-w-[80px]">Tài Bạch:</span>
-                                        <span className="text-brand-muted text-xs text-justify leading-relaxed">{faceData.palaces.wealth}</span>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                                    {/* Column 1: Core */}
+                                    <div className="space-y-3">
+                                        <div className="flex flex-col gap-1 border-b border-white/5 pb-2">
+                                            <span className="text-yellow-200 font-bold text-xs flex items-center gap-1"><Coins size={12}/> Tài Bạch (Tiền):</span>
+                                            <span className="text-brand-muted text-xs text-justify leading-relaxed">{faceData.palaces.wealth}</span>
+                                        </div>
+                                        <div className="flex flex-col gap-1 border-b border-white/5 pb-2">
+                                            <span className="text-blue-200 font-bold text-xs flex items-center gap-1"><Briefcase size={12}/> Quan Lộc (Sự nghiệp):</span>
+                                            <span className="text-brand-muted text-xs text-justify leading-relaxed">{faceData.palaces.career}</span>
+                                        </div>
+                                        <div className="flex flex-col gap-1 border-b border-white/5 pb-2">
+                                            <span className="text-pink-200 font-bold text-xs flex items-center gap-1"><Heart size={12}/> Phu Thê (Hôn nhân):</span>
+                                            <span className="text-brand-muted text-xs text-justify leading-relaxed">{faceData.palaces.marriage}</span>
+                                        </div>
+                                        {faceData.palaces.property && (
+                                            <div className="flex flex-col gap-1">
+                                                <span className="text-emerald-200 font-bold text-xs flex items-center gap-1"><Home size={12}/> Điền Trạch (Nhà đất):</span>
+                                                <span className="text-brand-muted text-xs text-justify leading-relaxed">{faceData.palaces.property}</span>
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="flex flex-col md:flex-row gap-1 md:gap-4 border-b border-white/5 pb-2">
-                                        <span className="text-blue-200 font-bold text-xs min-w-[80px]">Quan Lộc:</span>
-                                        <span className="text-brand-muted text-xs text-justify leading-relaxed">{faceData.palaces.career}</span>
-                                    </div>
-                                    <div className="flex flex-col md:flex-row gap-1 md:gap-4">
-                                        <span className="text-pink-200 font-bold text-xs min-w-[80px]">Phu Thê:</span>
-                                        <span className="text-brand-muted text-xs text-justify leading-relaxed">{faceData.palaces.marriage}</span>
+
+                                    {/* Column 2: Expanded */}
+                                    <div className="space-y-3">
+                                        {faceData.palaces.children && (
+                                            <div className="flex flex-col gap-1 border-b border-white/5 pb-2">
+                                                <span className="text-orange-200 font-bold text-xs flex items-center gap-1"><Baby size={12}/> Tử Tức (Con cái):</span>
+                                                <span className="text-brand-muted text-xs text-justify leading-relaxed">{faceData.palaces.children}</span>
+                                            </div>
+                                        )}
+                                        {faceData.palaces.migration && (
+                                            <div className="flex flex-col gap-1 border-b border-white/5 pb-2">
+                                                <span className="text-cyan-200 font-bold text-xs flex items-center gap-1"><Plane size={12}/> Thiên Di (Xuất ngoại):</span>
+                                                <span className="text-brand-muted text-xs text-justify leading-relaxed">{faceData.palaces.migration}</span>
+                                            </div>
+                                        )}
+                                        {faceData.palaces.health && (
+                                            <div className="flex flex-col gap-1 border-b border-white/5 pb-2">
+                                                <span className="text-red-200 font-bold text-xs flex items-center gap-1"><Activity size={12}/> Tật Ách (Sức khỏe):</span>
+                                                <span className="text-brand-muted text-xs text-justify leading-relaxed">{faceData.palaces.health}</span>
+                                            </div>
+                                        )}
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-purple-200 font-bold text-xs flex items-center gap-1"><UserCircle size={12}/> Phụ Mẫu (Cha mẹ):</span>
+                                            <span className="text-brand-muted text-xs text-justify leading-relaxed">{faceData.palaces.parents}</span>
+                                        </div>
                                     </div>
                                 </div>
                            </div>
