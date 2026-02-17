@@ -1,0 +1,7 @@
+{
+  "name": "Tử Vi & Nhân Tướng",
+  "description": "Ứng dụng xem bói tử vi, xem chỉ tay và tướng mặt dự đoán vận mệnh năm 2026 sử dụng công nghệ AI tiên tiến.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

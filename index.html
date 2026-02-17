@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Huyền Bí 2026 - AI Consultant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Updated Fonts: Inter (Sans) & Merriweather (Serif) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              serif: ['"Merriweather"', 'serif'],
+              sans: ['"Inter"', 'sans-serif'],
+            },
+            colors: {
+              brand: {
+                dark: '#050A18',     // Very dark blue, almost black
+                primary: '#0F172A',  // Slate 900
+                secondary: '#1E293B', // Slate 800
+                accent: '#D4AF37',   // Metallic Gold
+                accentHover: '#B5952F',
+                text: '#E2E8F0',     // Slate 200
+                muted: '#94A3B8',    // Slate 400
+              }
+            },
+            backgroundImage: {
+              'premium-gradient': "linear-gradient(135deg, #050A18 0%, #0F172A 100%)",
+              'gold-gradient': "linear-gradient(135deg, #D4AF37 0%, #F3E5AB 50%, #B5952F 100%)",
+              'grid-pattern': "linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)"
+            },
+            boxShadow: {
+              'glow': '0 0 20px rgba(212, 175, 55, 0.15)',
+              'card': '0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3)',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              scan: {
+                '0%': { top: '0%' },
+                '100%': { top: '100%' },
+              }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.4s ease-out',
+              'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
+              'scan': 'scan 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #050A18;
+        color: #E2E8F0;
+        font-family: 'Inter', sans-serif;
+      }
+      
+      /* Premium Glass Effect */
+      .glass-card {
+        background: rgba(30, 41, 59, 0.4);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+      }
+
+      .input-premium {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        transition: all 0.3s ease;
+      }
+      .input-premium:focus {
+        border-color: #D4AF37;
+        box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.2);
+        outline: none;
+      }
+
+      .btn-gold {
+        background: linear-gradient(135deg, #D4AF37 0%, #B5952F 100%);
+        color: #050A18;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      .btn-gold:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+      }
+      
+      .text-gold {
+        color: #D4AF37;
+      }
+      
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.3);
+        border-radius: 2px;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://esm.sh/lucide-react@^0.564.0",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react-markdown": "https://esm.sh/react-markdown@^10.1.0",
+    "html2canvas": "https://esm.sh/html2canvas@1.4.1",
+    "jspdf": "https://esm.sh/jspdf@2.5.1"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
