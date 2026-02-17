@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { PredictionResult } from '../types';
 import ReactMarkdown from 'react-markdown';
-import { Compass, Heart, Briefcase, Coins, Activity, Sparkles, ScanLine, FileText, Download, ChevronRight, ScrollText, Lightbulb, UserCircle, Calendar, Target, Image as ImageIcon, BookOpen, AlertOctagon, Ban, CheckCircle2, AlertTriangle, Eye, Smile, Gem, Scissors, Glasses, Crown, Printer, ScanFace, Star, Hexagon } from 'lucide-react';
+import { Compass, Heart, Briefcase, Coins, Activity, Sparkles, ScanLine, FileText, Download, ChevronRight, ScrollText, Lightbulb, UserCircle, Calendar, Target, Image as ImageIcon, BookOpen, AlertOctagon, Ban, CheckCircle2, AlertTriangle, Eye, Smile, Gem, Scissors, Glasses, Crown, Printer, ScanFace, Star, Hexagon, Component, Palette } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
@@ -459,10 +459,21 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset, imageSrc }) =>
                                  <div className="w-8 h-8 rounded-full bg-white border border-[#E8DCC2] flex items-center justify-center shrink-0 mt-1">
                                      <Gem size={14} className="text-yellow-600"/>
                                  </div>
-                                 <div>
-                                     <h4 className="text-sm font-bold text-yellow-900 mb-1">Vật Phẩm Phong Thủy</h4>
+                                 <div className="flex-grow">
+                                     <h4 className="text-sm font-bold text-yellow-900 mb-1">Vật Phẩm Phong Thủy: {faceData.solutions.fengShuiItem.itemName}</h4>
+                                     
+                                     {/* Tags for Material and Color */}
+                                     <div className="flex gap-2 my-2">
+                                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-800 border border-yellow-200 uppercase">
+                                             <Component size={10} /> {faceData.solutions.fengShuiItem.material}
+                                         </span>
+                                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 uppercase">
+                                             <Palette size={10} /> {faceData.solutions.fengShuiItem.color}
+                                         </span>
+                                     </div>
+
                                      <p className="text-sm text-slate-700 leading-relaxed text-justify italic font-medium">
-                                        "{faceData.solutions.fengShuiItem}"
+                                        "{faceData.solutions.fengShuiItem.meaning}"
                                      </p>
                                  </div>
                              </div>
@@ -821,9 +832,22 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset, imageSrc }) =>
                                   <Gem className="text-yellow-400 w-5 h-5" />
                                   <h3 className="text-lg font-bold text-white uppercase tracking-wider">Vật Phẩm Phong Thủy</h3>
                                </div>
-                               <p className="text-sm text-yellow-100/90 leading-relaxed text-justify border-l-2 border-yellow-500/50 pl-4 py-1">
-                                  {faceData.solutions.fengShuiItem}
-                               </p>
+                               <div className="bg-black/20 rounded-lg p-4 border border-yellow-500/10">
+                                   <div className="flex justify-between items-start mb-2">
+                                       <h4 className="text-yellow-200 font-bold text-base">{faceData.solutions.fengShuiItem.itemName}</h4>
+                                   </div>
+                                   <div className="flex flex-wrap gap-2 mb-3">
+                                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-500/20 text-yellow-200 border border-yellow-500/30 uppercase tracking-wide">
+                                           <Component size={10} /> {faceData.solutions.fengShuiItem.material}
+                                       </span>
+                                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase tracking-wide">
+                                           <Palette size={10} /> {faceData.solutions.fengShuiItem.color}
+                                       </span>
+                                   </div>
+                                   <p className="text-sm text-yellow-100/80 leading-relaxed text-justify italic">
+                                      "{faceData.solutions.fengShuiItem.meaning}"
+                                   </p>
+                               </div>
                           </div>
                       </div>
                   ) : (

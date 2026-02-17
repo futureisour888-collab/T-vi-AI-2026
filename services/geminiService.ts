@@ -71,7 +71,16 @@ const baseProperties = {
             hairStyle: { type: Type.STRING },
             accessories: { type: Type.STRING },
             makeup: { type: Type.STRING },
-            fengShuiItem: { type: Type.STRING },
+            fengShuiItem: { 
+                type: Type.OBJECT,
+                properties: {
+                    itemName: { type: Type.STRING },
+                    material: { type: Type.STRING },
+                    color: { type: Type.STRING },
+                    meaning: { type: Type.STRING },
+                },
+                required: ["itemName", "material", "color", "meaning"]
+            },
         },
         required: ["hairStyle", "accessories", "makeup", "fengShuiItem"]
       }
@@ -281,7 +290,11 @@ export const getImageAnalysis = async (
       - hairStyle: Gợi ý kiểu tóc cụ thể phù hợp khuôn mặt và ngũ hành, giải thích tại sao.
       - accessories: Gợi ý chi tiết kính, khuyên tai hoặc phụ kiện đi kèm để cân bằng gương mặt.
       - makeup: Hướng dẫn trang điểm hoặc thẩm mỹ (nếu cần) để che khuyết điểm, tăng vượng khí.
-      - fengShuiItem: Tên vật phẩm + Chất liệu + Màu sắc + Ý nghĩa phong thủy chi tiết (Viết 1 đoạn văn ngắn mô tả đầy đủ).
+      - fengShuiItem: Đề xuất một vật phẩm phong thủy cải vận tốt nhất. Hãy cung cấp 4 thông tin:
+           + itemName: Tên chính xác vật phẩm (ví dụ: Tỳ Hưu Thạch Anh, Vòng Tay Gỗ Sưa...).
+           + material: Chất liệu chính (Đá, Gỗ, Kim loại...) phù hợp ngũ hành người đó.
+           + color: Màu sắc phù hợp mệnh.
+           + meaning: Ý nghĩa phong thủy (chiêu tài, cầu duyên, hay hộ mệnh...) giải thích ngắn gọn tại sao chọn vật phẩm này.
 
       PHẦN 3: VẬN HẠN 2026 CHI TIẾT
       Trong 'details' (Sự nghiệp, Tài lộc, Tình duyên, Sức khỏe), hãy viết nội dung dài, chi tiết, cụ thể hóa các tháng tốt/xấu nếu có thể.

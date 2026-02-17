@@ -62,7 +62,12 @@ export interface FaceAnalysisData {
     hairStyle: string; // Gợi ý kiểu tóc
     accessories: string; // Kính mắt / Khuyên tai
     makeup: string; // Gợi ý trang điểm / Thẩm mỹ
-    fengShuiItem: string; // Vật phẩm phong thủy hợp mệnh
+    fengShuiItem: {     // UPDATED: Structured object
+        itemName: string; // Tên vật phẩm (VD: Tỳ Hưu Thạch Anh)
+        material: string; // Chất liệu (VD: Đá Thạch Anh Tóc Vàng)
+        color: string;    // Màu sắc (VD: Vàng Kim)
+        meaning: string;  // Ý nghĩa phong thủy chi tiết
+    }; 
   };
 }
 

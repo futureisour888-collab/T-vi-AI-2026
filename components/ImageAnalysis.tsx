@@ -83,7 +83,7 @@ const ImageAnalysis: React.FC<ImageAnalysisProps> = ({ type, userProfile, onAnal
       <div className="flex-1 w-full">
         <div className="flex items-center justify-between mb-2">
            <label className="text-xs font-bold text-brand-muted uppercase tracking-wider">{label}</label>
-           {file && <span className="text-xs text-brand-accent flex items-center gap-1"><Scan size={12}/> Ready</span>}
+           {file && <span className="text-xs text-brand-accent flex items-center gap-1"><Scan size={12}/> Sẵn sàng</span>}
         </div>
         
         {!file ? (
@@ -124,7 +124,7 @@ const ImageAnalysis: React.FC<ImageAnalysisProps> = ({ type, userProfile, onAnal
                     {/* Status Badge */}
                     <div className="absolute top-2 left-2 bg-black/60 backdrop-blur px-2 py-0.5 rounded text-[8px] text-cyan-400 border border-cyan-500/30 flex items-center gap-1 font-mono">
                         <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></div>
-                        FACE_DETECTED
+                        NHẬN_DIỆN_THÀNH_CÔNG
                     </div>
                 </>
             )}
