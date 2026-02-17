@@ -1,6 +1,6 @@
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Camera, X, Scan, Info, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Camera, X, Scan, Info, Plus, ChevronDown, ChevronUp, ScanFace } from 'lucide-react';
 import { ImageAnalysisPayload, UserProfile } from '../types';
 
 interface ImageAnalysisProps {
@@ -76,7 +76,8 @@ const ImageAnalysis: React.FC<ImageAnalysisProps> = ({ type, userProfile, onAnal
     setFile: (f: File | null) => void, 
     inputRef: React.RefObject<HTMLInputElement | null>,
     label: string,
-    instruction: string
+    instruction: string,
+    isFaceMode: boolean = false
   ) => {
     return (
       <div className="flex-1 w-full">
@@ -88,27 +89,49 @@ const ImageAnalysis: React.FC<ImageAnalysisProps> = ({ type, userProfile, onAnal
         {!file ? (
           <div
             onClick={() => inputRef.current?.click()}
-            className="w-full aspect-[4/3] md:aspect-[4/5] bg-brand-dark/30 border border-dashed border-brand-muted/30 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-brand-secondary/30 hover:border-brand-accent/50 transition-all group relative overflow-hidden active:bg-brand-secondary/40"
+            className="w-full aspect-[3/4] md:aspect-[4/5] bg-brand-dark/30 border border-dashed border-brand-muted/30 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-brand-secondary/30 hover:border-brand-accent/50 transition-all group relative overflow-hidden active:bg-brand-secondary/40"
           >
             <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none"></div>
             <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-brand-secondary/50 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform border border-white/5">
-              <Camera className="w-5 h-5 md:w-6 md:h-6 text-brand-muted group-hover:text-brand-accent transition-colors" />
+              {isFaceMode ? <ScanFace className="w-6 h-6 text-brand-muted group-hover:text-brand-accent" /> : <Camera className="w-6 h-6 text-brand-muted group-hover:text-brand-accent" />}
             </div>
             <p className="text-xs text-brand-muted px-4 text-center font-medium leading-relaxed max-w-[90%]">{instruction}</p>
           </div>
         ) : (
-          <div className="relative w-full aspect-[4/3] md:aspect-[4/5] rounded-lg overflow-hidden border border-brand-accent/30 bg-black group shadow-lg">
-            <img src={URL.createObjectURL(file)} alt="Preview" className="w-full h-full object-cover opacity-90" />
+          <div className="relative w-full aspect-[3/4] md:aspect-[4/5] rounded-lg overflow-hidden border border-brand-accent/30 bg-black group shadow-lg">
+            <img src={URL.createObjectURL(file)} alt="Preview" className="w-full h-full object-cover opacity-80" />
             
-            {/* Tech Overlay */}
-            <div className="absolute inset-0 border-[3px] border-transparent group-hover:border-brand-accent/20 transition-all pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 right-0 bg-brand-dark/80 p-2 text-xs text-center text-white backdrop-blur-sm border-t border-white/10">
-              Đã tải lên
-            </div>
-            
+            {/* --- FACE ID SCANNING EFFECT (COMMERCIAL LOOK) --- */}
+            {isFaceMode && (
+                <>
+                    {/* Scanning Grid */}
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.1)_1px,transparent_1px)] bg-[size:20px_20px] opacity-30"></div>
+                    
+                    {/* Scanning Line */}
+                    <div className="absolute top-0 left-0 w-full h-0.5 bg-cyan-400 shadow-[0_0_15px_#22d3ee] animate-scan opacity-80"></div>
+                    
+                    {/* Corners */}
+                    <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-cyan-400/60 rounded-tl-lg"></div>
+                    <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-cyan-400/60 rounded-tr-lg"></div>
+                    <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-cyan-400/60 rounded-bl-lg"></div>
+                    <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-cyan-400/60 rounded-br-lg"></div>
+
+                    {/* Fake Landmarks */}
+                    <div className="absolute top-1/3 left-1/3 w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_5px_cyan]"></div>
+                    <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_5px_cyan]"></div>
+                    <div className="absolute bottom-1/3 left-1/2 -translate-x-1/2 w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_5px_cyan]"></div>
+                    
+                    {/* Status Badge */}
+                    <div className="absolute top-2 left-2 bg-black/60 backdrop-blur px-2 py-0.5 rounded text-[8px] text-cyan-400 border border-cyan-500/30 flex items-center gap-1 font-mono">
+                        <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></div>
+                        FACE_DETECTED
+                    </div>
+                </>
+            )}
+
             <button
               onClick={(e) => { e.stopPropagation(); setFile(null); if(inputRef.current) inputRef.current.value = ''; }}
-              className="absolute top-2 right-2 p-2 bg-brand-dark/60 backdrop-blur-md rounded-full text-white hover:bg-red-500/80 transition-colors border border-white/10 shadow-md touch-manipulation"
+              className="absolute top-2 right-2 p-2 bg-brand-dark/60 backdrop-blur-md rounded-full text-white hover:bg-red-500/80 transition-colors border border-white/10 shadow-md touch-manipulation z-20"
             >
               <X size={16} />
             </button>
@@ -140,7 +163,7 @@ const ImageAnalysis: React.FC<ImageAnalysisProps> = ({ type, userProfile, onAnal
   return (
     <div className="max-w-4xl mx-auto glass-card p-4 md:p-8 rounded-2xl animate-fade-in-up flex flex-col md:flex-row gap-6 md:gap-8">
       
-      {/* Sidebar / Settings - Stacked on Mobile */}
+      {/* Sidebar / Settings */}
       <div className="md:w-1/3 space-y-5 md:border-r border-white/5 md:pr-6">
          <div className="text-center md:text-left">
             <h3 className="text-lg md:text-xl font-serif text-white mb-2">Hồ Sơ Phân Tích</h3>
@@ -150,10 +173,15 @@ const ImageAnalysis: React.FC<ImageAnalysisProps> = ({ type, userProfile, onAnal
                     {userProfile.birthDay}/{userProfile.birthMonth}/{userProfile.birthYear} - {userProfile.gender === 'male' ? 'Nam' : 'Nữ'}
                 </p>
             </div>
+            
+            {/* Commercial Hook Text */}
             <p className="text-brand-muted text-xs leading-relaxed">
-              {type === 'FORTUNE_PAPER' 
-                ? 'Đọc và giải nghĩa Thơ/Văn trên thẻ xăm. Luận giải chi tiết dựa trên sở cầu của bạn.' 
-                : 'AI sẽ kết hợp dữ liệu sinh trắc hình ảnh với Hồ sơ Tín chủ để đưa ra luận giải chính xác nhất.'}
+              {type === 'FACE' 
+                 ? <span className="text-cyan-400 font-medium">✨ Sử dụng công nghệ Face ID Scanning để đo đạc tỷ lệ Tam Đình - Ngũ Nhạc và đưa ra gợi ý cải vận (Thẩm mỹ/Phong thủy).</span>
+                 : type === 'FORTUNE_PAPER' 
+                   ? 'Đọc và giải nghĩa Thơ/Văn trên thẻ xăm. Luận giải chi tiết dựa trên sở cầu của bạn.' 
+                   : 'AI sẽ kết hợp dữ liệu sinh trắc hình ảnh với Hồ sơ Tín chủ để đưa ra luận giải chính xác nhất.'
+              }
             </p>
          </div>
 
@@ -176,7 +204,7 @@ const ImageAnalysis: React.FC<ImageAnalysisProps> = ({ type, userProfile, onAnal
               </div>
             )}
 
-            {/* WISH LIST MULTI-SELECT - COMPACT VERSION */}
+            {/* WISH LIST */}
             {type === 'FORTUNE_PAPER' && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -186,7 +214,6 @@ const ImageAnalysis: React.FC<ImageAnalysisProps> = ({ type, userProfile, onAnal
                    )}
                 </div>
 
-                {/* Selected Tags View */}
                 {!isWishListExpanded && (
                   <div className="flex flex-wrap gap-2">
                      {selectedWishes.map(wish => (
@@ -204,7 +231,6 @@ const ImageAnalysis: React.FC<ImageAnalysisProps> = ({ type, userProfile, onAnal
                   </div>
                 )}
 
-                {/* Expanded Selection List */}
                 {isWishListExpanded && (
                   <div className="bg-brand-dark/50 border border-white/10 rounded-lg p-2 animate-fade-in">
                       <div className="flex flex-wrap gap-2 mb-3">
@@ -233,10 +259,6 @@ const ImageAnalysis: React.FC<ImageAnalysisProps> = ({ type, userProfile, onAnal
                       </button>
                   </div>
                 )}
-                
-                {!isWishListExpanded && selectedWishes.length === 0 && (
-                  <p className="text-[10px] text-brand-muted italic">* Chưa chọn. AI sẽ luận giải tổng quát.</p>
-                )}
               </div>
             )}
          </div>
@@ -263,7 +285,7 @@ const ImageAnalysis: React.FC<ImageAnalysisProps> = ({ type, userProfile, onAnal
 
           {type === 'FACE' && (
              <div className="w-full md:max-w-xs mx-auto">
-                 {renderUploadBox(faceImage, setFaceImage, faceInputRef, "Dữ Liệu Khuôn Mặt", "Tải lên ảnh chân dung chính diện")}
+                 {renderUploadBox(faceImage, setFaceImage, faceInputRef, "Dữ Liệu Khuôn Mặt", "Tải lên ảnh chân dung chính diện", true)}
                  <input ref={faceInputRef} type="file" accept="image/*" className="hidden" onChange={handleFaceChange} />
              </div>
           )}
@@ -279,9 +301,17 @@ const ImageAnalysis: React.FC<ImageAnalysisProps> = ({ type, userProfile, onAnal
         <button
           onClick={handleSubmit}
           disabled={isLoading || !isFormValid()}
-          className="mt-6 md:mt-8 w-full btn-gold py-3.5 md:py-4 rounded-lg text-brand-dark font-bold uppercase tracking-widest text-sm disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed shadow-lg transition-all touch-manipulation"
+          className="mt-6 md:mt-8 w-full btn-gold py-3.5 md:py-4 rounded-lg text-brand-dark font-bold uppercase tracking-widest text-sm disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed shadow-lg transition-all touch-manipulation relative overflow-hidden group"
         >
-          {isLoading ? 'Đang Phân Tích...' : 'Khởi Chạy Phân Tích'}
+          {isLoading ? (
+             'Đang Quét & Phân Tích...'
+          ) : (
+             <>
+                <span className="relative z-10">Khởi Chạy Phân Tích</span>
+                {/* Shine effect */}
+                <div className="absolute top-0 -left-[100%] w-[50%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] group-hover:animate-[shine_1.5s_infinite]"></div>
+             </>
+          )}
         </button>
         {!isFormValid() && !isLoading && (
           <p className="text-center text-xs text-red-400 mt-2">Vui lòng tải ảnh lên để tiếp tục.</p>

@@ -55,6 +55,15 @@ const App: React.FC = () => {
       if (activeTab === FeatureMode.FORTUNE_PAPER) type = 'FORTUNE_PAPER';
 
       const prediction = await getImageAnalysis(payload, type);
+
+      // --- Gender Gatekeeper Logic ---
+      if (prediction.genderMismatch) {
+         setError(`LỖI XÁC THỰC FACE ID: Hồ sơ của bạn là ${userProfile?.gender === 'male' ? 'NAM' : 'NỮ'}, nhưng hệ thống nhận diện ảnh tải lên là giới tính khác. Vui lòng tải ảnh chính chủ để đảm bảo kết quả luận giải chính xác.`);
+         setIsLoading(false);
+         // Do not set result, stay on upload screen with error
+         return;
+      }
+
       setResult(prediction);
     } catch (err: any) {
       setError(err.message || 'Không thể phân tích ảnh. Vui lòng kiểm tra lại.');

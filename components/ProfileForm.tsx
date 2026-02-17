@@ -1,11 +1,25 @@
 
 import React, { useState, useEffect } from 'react';
 import { UserProfile } from '../types';
-import { Sparkles, Calendar, Clock, User } from 'lucide-react';
+import { Sparkles, Calendar, Clock, User, Zap } from 'lucide-react';
+import { convertSolarToLunar } from '../utils/dateUtils';
 
 interface ProfileFormProps {
   onSubmit: (profile: UserProfile) => void;
 }
+
+const TEST_PROFILES = [
+  { name: "Nguyễn Văn An", d: 15, m: 5, y: 1990, g: 'male', h: 9, min: 30 },      // Canh Ngọ
+  { name: "Trần Thị Bích", d: 22, m: 8, y: 1995, g: 'female', h: 14, min: 15 },   // Ất Hợi
+  { name: "Lê Văn Cường", d: 10, m: 2, y: 1985, g: 'male', h: 7, min: 0 },        // Ất Sửu
+  { name: "Phạm Thị Dung", d: 5, m: 11, y: 2000, g: 'female', h: 19, min: 45 },   // Canh Thìn
+  { name: "Hoàng Văn Em", d: 30, m: 4, y: 1998, g: 'male', h: 23, min: 15 },      // Mậu Dần
+  { name: "Vũ Thị Mai", d: 12, m: 9, y: 1992, g: 'female', h: 5, min: 30 },       // Nhâm Thân
+  { name: "Đặng Văn Hùng", d: 18, m: 1, y: 1980, g: 'male', h: 11, min: 0 },      // Canh Thân
+  { name: "Bùi Thị Lan", d: 25, m: 12, y: 1988, g: 'female', h: 16, min: 20 },    // Mậu Thìn
+  { name: "Ngô Văn Nam", d: 8, m: 6, y: 2002, g: 'male', h: 13, min: 10 },        // Nhâm Ngọ
+  { name: "Đỗ Thị Hương", d: 14, m: 3, y: 1975, g: 'female', h: 8, min: 50 }      // Ất Mão
+];
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ onSubmit }) => {
   // Form State
@@ -15,6 +29,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ onSubmit }) => {
   const [day, setDay] = useState(1);
   const [month, setMonth] = useState(1);
   const [year, setYear] = useState(1995);
+  const [lunarDateStr, setLunarDateStr] = useState('');
   
   // Options
   const [calendarType, setCalendarType] = useState<'solar' | 'lunar'>('solar');
@@ -30,6 +45,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ onSubmit }) => {
   // View Time State
   const [viewYear, setViewYear] = useState(2026);
   const [viewMonth, setViewMonth] = useState(1);
+  
+  // Dev mode toggle
+  const [showTestProfiles, setShowTestProfiles] = useState(false);
 
   // Helper arrays
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -38,28 +56,58 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ onSubmit }) => {
   const hours = Array.from({ length: 24 }, (_, i) => i);
   const minutes = Array.from({ length: 60 }, (_, i) => i);
 
+  useEffect(() => {
+    try {
+        const lunar = convertSolarToLunar(day, month, year);
+        setLunarDateStr(lunar.fullString);
+    } catch (e) {
+        console.error("Date conversion error", e);
+        setLunarDateStr('');
+    }
+  }, [day, month, year]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) return;
+    processSubmit(name, day, month, year, birthHour, birthMinute, gender);
+  };
+
+  const processSubmit = (
+    n: string, d: number, m: number, y: number, 
+    h: number, min: number, g: 'male' | 'female'
+  ) => {
+    if (!n.trim()) return;
 
     // Create Date string YYYY-MM-DD for API consistency
-    const birthDateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const birthTimeStr = `${String(birthHour).padStart(2, '0')}:${String(birthMinute).padStart(2, '0')}`;
+    const birthDateStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const birthTimeStr = `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
 
     const profile: UserProfile = {
-      name,
-      birthDay: day,
-      birthMonth: month,
-      birthYear: year,
+      name: n,
+      birthDay: d,
+      birthMonth: m,
+      birthYear: y,
       birthDate: birthDateStr,
-      calendarType,
+      calendarType: 'solar', // Assume solar for test profiles
       birthTimeStr,
-      gender,
-      viewYear,
-      viewMonth
+      gender: g,
+      viewYear: 2026,
+      viewMonth: 1
     };
 
     onSubmit(profile);
+  };
+
+  const applyTestProfile = (p: typeof TEST_PROFILES[0]) => {
+     setName(p.name);
+     setDay(p.d);
+     setMonth(p.m);
+     setYear(p.y);
+     setGender(p.g as 'male' | 'female');
+     setBirthHour(p.h);
+     setBirthMinute(p.min);
+     
+     // Auto submit
+     processSubmit(p.name, p.d, p.m, p.y, p.h, p.min, p.g as 'male' | 'female');
   };
 
   return (
@@ -96,7 +144,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ onSubmit }) => {
 
                 {/* 2. Ngày Sinh Row */}
                 <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-brand-muted uppercase tracking-wider ml-1">Ngày sinh</label>
+                    <label className="text-xs font-bold text-brand-muted uppercase tracking-wider ml-1">Ngày sinh (Dương lịch)</label>
                     <div className="grid grid-cols-3 gap-2">
                         <div className="relative">
                             <select 
@@ -127,6 +175,15 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ onSubmit }) => {
                              />
                         </div>
                     </div>
+                    {/* Lunar Date Display */}
+                    {lunarDateStr && (
+                        <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-brand-accent/10 border border-brand-accent/20 rounded-md">
+                            <Calendar size={14} className="text-brand-accent shrink-0" />
+                            <span className="text-xs font-medium text-brand-accent">
+                                Âm lịch: {lunarDateStr}
+                            </span>
+                        </div>
+                    )}
                 </div>
 
                 {/* 3. Lịch Âm/Dương Radio */}
@@ -238,6 +295,32 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ onSubmit }) => {
                 </div>
 
             </form>
+
+            {/* QUICK TEST SECTION */}
+            <div className="mt-8 border-t border-white/10 pt-4">
+                <button 
+                    onClick={() => setShowTestProfiles(!showTestProfiles)}
+                    className="flex items-center gap-2 text-xs font-bold text-brand-muted uppercase hover:text-brand-accent transition-colors mb-4"
+                >
+                    <Zap size={12} className={showTestProfiles ? "text-brand-accent" : ""} /> 
+                    {showTestProfiles ? "Ẩn Test Mode" : "Mở Test Mode (1-Click Login)"}
+                </button>
+                
+                {showTestProfiles && (
+                    <div className="grid grid-cols-2 gap-2 animate-fade-in">
+                        {TEST_PROFILES.map((p, i) => (
+                            <button
+                                key={i}
+                                onClick={() => applyTestProfile(p)}
+                                className="text-[10px] bg-brand-secondary/50 hover:bg-brand-secondary border border-white/5 hover:border-brand-accent/30 rounded p-2 text-left transition-all truncate"
+                            >
+                                <span className="font-bold text-white block">{p.name}</span>
+                                <span className="text-brand-muted">{p.y} - {p.g === 'male' ? 'Nam' : 'Nữ'}</span>
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     </div>
   );

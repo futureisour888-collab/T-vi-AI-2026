@@ -38,6 +38,34 @@ export interface FortuneContent {
   meaning_details: string; // Phân tích chi tiết từng câu thơ
 }
 
+// New Structure for Commercial Face Reading
+export interface FaceAnalysisData {
+  faceShape: string; // Ví dụ: Mặt chữ Điền, Mặt Trái Xoan
+  element: string; // Ngũ hành khuôn mặt (Kim/Mộc...)
+  harmonyScore: number; // Điểm phúc tướng (0-100)
+  // Phân tích ngũ quan
+  features: {
+    eyes: string; // Thần thái đôi mắt
+    nose: string; // Tướng mũi (Tài bạch)
+    mouth: string; // Tướng miệng (Xuất nạp)
+    brows: string; // Lông mày (Bảo thọ)
+  };
+  // 12 Cung Tướng Mệnh (Premium Content)
+  palaces: {
+    wealth: string; // Cung Tài Bạch
+    career: string; // Cung Quan Lộc
+    marriage: string; // Cung Phu Thê
+    parents: string; // Cung Phụ Mẫu
+  };
+  // Giải pháp cải vận (Monetization Hook)
+  solutions: {
+    hairStyle: string; // Gợi ý kiểu tóc
+    accessories: string; // Kính mắt / Khuyên tai
+    makeup: string; // Gợi ý trang điểm / Thẩm mỹ
+    fengShuiItem: string; // Vật phẩm phong thủy hợp mệnh
+  };
+}
+
 export interface PredictionResult {
   title: string;
   overview: string; // Tóm tắt tổng quan
@@ -55,6 +83,8 @@ export interface PredictionResult {
   advice: string; // Lời khuyên hành động
   userAttributes?: UserAttributes; // Added to store user context for the report
   fortuneContent?: FortuneContent; // New field for detailed Fortune Paper data
+  faceAnalysis?: FaceAnalysisData; // New field for specialized Face Reading
+  genderMismatch?: boolean; // New field: Checks if uploaded image gender matches profile
 }
 
 export interface ImageAnalysisPayload {
